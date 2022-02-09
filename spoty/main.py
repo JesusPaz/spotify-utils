@@ -56,12 +56,25 @@ def list_playlists(sp):
 
 def main():
     scope = ["user-top-read", "playlist-modify-public"]
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
+    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
+        scope=scope, open_browser=False))
 
     # list_playlists(sp)
-    artist_list = get_top_artists('long_term', 50, sp)
-    # for i in artist_list:
-    #     print(i["name"])
+    long_list = get_top_artists('long_term', 5, sp)
+    medium_list = get_top_artists('medium_term', 5, sp)
+    short_list = get_top_artists('short_term', 5, sp)
+    artist_list = long_list + medium_list + short_list
+    ids = []
+    unique = []
+    for i in artist_list:
+        name = i["name"]
+        if name not in ids:
+            print(name)
+            ids.append(name)
+            unique.append(i)
+    artist_list = unique
+    print(len(artist_list))
+
     tracks = []
     for artist in artist_list:
         related_artist_list = get_related_artists_for_artist(artist, sp)
@@ -71,7 +84,6 @@ def main():
     print(len(tracks))
 
     filter_tracks = []
-
     for track in tracks:
         filter_tracks.append(track["uri"])
 
@@ -80,7 +92,9 @@ def main():
     print(len(filter_tracks))
     for i in filter_tracks:
         # print(i)
-        add_tracks_to_playlist("spotify:playlist:4nOG0v0lregxGw2HGtd1sO", [i], sp)
-    print("ENDD")
+        add_tracks_to_playlist(
+            "spotify:playlist:1VNn0rYoYXw6Si21IL91tj", [i], sp)
+    print("------------ END ------------")
+
 
 main()
